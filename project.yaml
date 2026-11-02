@@ -2,7 +2,7 @@ schema: "1"
 
 title: "DonoHere"
 
-summary: "A flutter based application where blood donation services are able to coordinate and donors could request for donation."
+summary: "An app that helps blood donation services and donors to coordinate and request donations so that the process is more efficient and accessible."
 
 members:
   - name: "Mahder Kassaw"
