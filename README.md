@@ -1,2 +1,2 @@
-# blood-donation-coordinator
-A flutter based application where blood donation services are able to coordinate and donors could request for donation.
+# DonoHere
+An app that helps blood donation services and donors to coordinate and request donations so that the process is more efficient and accessible.
