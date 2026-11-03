@@ -8,11 +8,9 @@ proposal under four pages.
 
 ---
 
-## 1. Title and one-sentence description
+## 1. DonoHere
 
-*A working title and one sentence: "An app that helps [users] to [do
-what] so that [benefit]."*
-
+An app that helps blood donation services and donors to coordinate and request donations so that the process is more efficient and accessible.
 ## 2. Group
 
 *Student IDs, emails and GitHub usernames are in `project.yaml`; do not
@@ -20,12 +18,11 @@ repeat them here.*
 
 | Name | Role |
 |---|---|
-| | *e.g. team lead, UI, data/backend, testing* |
-| | |
-| | |
-| | |
-
-*Roles are starting points; everyone writes code in every layer.*
+| Liya Belay | Flutter dev, donor side |
+| Maedot Berhanu | UI/UX + state management |
+| Mahder Kassaw | Tech lead + backend/API |
+| Siham Tewekel | QA + docs + notifications |
+| Wangari Dereje | Flutter dev, blood service side |
 
 ## 3. The problem
 
