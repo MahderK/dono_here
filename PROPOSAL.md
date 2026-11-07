@@ -38,12 +38,15 @@ For each: what they need from the app and how often they would use it.*
 
 ## 5. User stories
 
-*Five to eight, in the form "As a [user type], I want [action] so that
-[benefit]." Mark each as **must**, **should** or **could**. The "must"
-stories define your minimum product.*
+1. As a donor or requester, I want to register and sign in so that my profile and requests are linked to me. (must)
+2. As a donor, I want to create a profile with my blood type, area and availability so that people who need blood can find me. (must)
+3. As a requester, I want to post a blood request with blood type, units needed, hospital and urgency so that donors know where help is needed. (must)
+4. As a requester, I want to see nearby donors with the matching blood type so that I can reach the right people quickly. (must)
+5. As a donor, I want to see open requests near me that match my blood type so that I can choose where to help. (must)
+6. As a donor, I want to respond to a request so that the requester knows someone is coming. (should)
+7. As a requester, I want the app to suggest the most suitable donors for my request so that I do not have to check every profile. (should)
+8. As a requester, I want to mark a request as fulfilled so that it disappears from the active list. (could)
 
-1. As a …, I want … so that …. (**must**)
-2. …
 
 ## 6. Screens
 
@@ -53,7 +56,13 @@ most important screens (photos of paper sketches are fine).*
 
 | Screen | Purpose | User stories |
 |---|---|---|
-| | | |
+| Sign in / Register | Create an account or sign in | 1 |
+| Home (open requests) | List open requests near me that match my blood type | 5 |
+| Donor profile | Create or edit blood type, area and availability | 2 |
+| Create request | Form for blood type, units, hospital and urgency | 3 |
+| Nearby donors | List or map of matching donors close to a request | 4, 7 |
+| Request detail | Full request info, respond button, mark as fulfilled | 6, 8 |
+| My requests | Requests I posted and their status | 3, 8 |
 
 ## 7. Data model
 
