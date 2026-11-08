@@ -93,53 +93,44 @@ most important screens (photos of paper sketches are fine)._
 
 ## 7. Data model
 
-_The main entities and their fields, and how they relate. A simple
-diagram or a list such as:_
+Entities and their fields 
 
-```
-Event: id, title, start, venue, description, organiserId
-User: id, name, email, programme
-Registration: userId, eventId, createdAt
-```
+ 1. User: id, fullName, email, phoneNumber, role, createdAt 
+2. DonorProfile:  id, userId, bloodType, area, lastDonation, latitude, longitude, isAvailable, isVisible, updatedAt
+3. BloodRequest: id, requesterId, bloodTypeNeeded, unitsNeeded, hospital, latitude, longitude, urgency, status, createdAt
+4. RequestResponse: id, requestId, donorId, status, createdAt 
 
-| Entites and their fields |
+ Relationships between entities 
 
-| 1. User | id, fullName, email, phoneNumber, role, createdAt |
-| 2. DonorProfile | id, userId, fullName, bloodType, area, lastDonation |
-| 3. BloodRequest | id, requesterId, bloodTypeNeeded, unitsNeeded, hospital, urgency, status, createdAt |
-| 4. RequestResponse | id, requestId, donorId, status, createdAt |
-
-| Relationships between entities |
-
-| One User can have one DonorProfile if they register as a donor. |
-| One User can create multiple BloodRequests. |
-| One DonorProfile can respond to multiple BloodRequests. |
-| One BloodRequest can receive responses from multiple donors. |
-| Each RequestResponse belongs to one donor and one blood request. |
+1. One User can have one DonorProfile if they register as a donor. 
+2. One User can create multiple BloodRequests. 
+3. One DonorProfile can respond to multiple BloodRequests. 
+4. One BloodRequest can receive responses from multiple donors.
+5. Each RequestResponse belongs to one donor and one blood request. 
 
 ## 8. Data sources
 
-_Which data is stored locally (and with what: shared_preferences, drift)?
-Which comes from a REST web service (one you build or find), and which
-from Firebase (Auth, Firestore)? Every project needs local persistence, a
-REST source and Firebase._
+1. Local storage
 
-| 1. Local storage |
+SharedPreferences: Stores simple application preferences such as selected language, notification preferences, and user settings.
 
-| SharedPreferences: Stores simple application preferences such as selected language, notification preferences, and user settings. |
-| Drift: Stores locally cached data such as recently viewed open blood requests and previously retrieved nearby donor or request listings. This allows users to access previously loaded information when the internet connection is unavailable. |
+Drift: Stores locally cached data such as recently viewed open blood requests and previously retrieved nearby donor or request listings. This allows users to access previously loaded information when the internet connection is unavailable.
 
-| 2. REST API – Custom |
+2. REST API – Custom
 
-| Find nearby donors based on the requested blood type and their availability. |
-| Find nearby open blood requests that match a donor's blood type. |
-| Suggest suitable donors based on blood type, distance, and availability. |
-| Return matching results to the Flutter application. |
+Find nearby donors based on the requested blood type and their availability.
 
-| 3. Firebase |
+Find nearby open blood requests that match a donor's blood type.
 
-| Firebase Authentication: Handles user registration, login, and authentication. |
-| Cloud Firestore: Stores user accounts, donor profiles, blood requests, and donor responses. It also keeps the application's data synchronized across users and devices. |
+Suggest suitable donors based on blood type, distance, and availability.
+
+Return matching results to the Flutter application.
+
+3. Firebase
+
+Firebase Authentication: Handles user registration, login, and authentication.
+
+Cloud Firestore: Stores user accounts, donor profiles, blood requests, and donor responses. It also keeps the application's data synchronized across users and devices.
 
 ## 9. Device feature and AI feature
 
@@ -172,20 +163,15 @@ Artificial Intelligence (AI) can support the process of finding potential donors
 
 ## 10. Risks
 
-_Three to five things that could go wrong (a third-party API might be
-unavailable, a feature might need a paid service, a member has exams)
-and what you will do about each._
-
 | Risk | Likelihood | Plan |
-| ---- | ---------- | ---- |
+|------|------------|------|
+| Donors may provide outdated availability or location information. | High | Allow donors to update their profiles and display when their information was last updated. |
+| Users' personal information and locations may be exposed. | Medium | Use Firebase security rules and share only approximate donor locations. |
+| Internet connection problems may prevent users from accessing nearby donors or requests. | High | Cache previously retrieved information using Drift and notify users when live data is unavailable. |
+| REST API or Firebase services may become temporarily unavailable. | Medium | Handle connection errors, retry failed requests, and use cached information when possible. |
+| Push notifications require Cloud Functions (which need the paid Blaze plan) which is a cost risk. | Medium | Check Firebase pricing early and consider alternative notification methods or manual notification approach. |
+| Backend development depends on one team member, creating a bus-factor risk if that person becomes unavailable. | Medium | Ensure at least two team members understand the backend code, document the setup and implementation, and share knowledge regularly. |
 
-| Donors may provide incorrect or outdated availability and location information. | High | Allow donors to update their profiles and availability status, and display when their information was last updated. |
-
-| Users' personal information and locations may be exposed. | Medium | Use Firebase security rules, secure authentication, and only share approximate donor locations with authorized users. |
-
-| Internet connection problems may prevent users from accessing nearby donors or requests. | High | Use Drift to cache previously retrieved information and display a message when live data is unavailable. |
-
-| REST API or Firebase services may become temporarily unavailable. | Medium | Handle connection errors, retry failed requests, and use locally cached information when possible. |
 
 ## 11. Milestone plan
 
