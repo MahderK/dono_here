@@ -24,8 +24,6 @@ An app that helps blood donation services and donors to coordinate and request d
 
 ## 3. The problem
 
-## 3. The problem
-
 In Ethiopia, blood supply does not keep up with demand. Officials from the National Blood Bank Service say recruiting voluntary, unpaid donors is the main challenge, because low awareness and fear deter people. The country relies heavily on family replacement and paid donors, and the blood bank has declared nationwide shortages during fasting seasons. The shortage matters most for mothers and newborns: Addis Fortune links the lack of safe blood to higher maternal mortality.
 
 Those affected are patients needing transfusions (surgery, accidents, childbirth complications, sickle cell disease, cancer treatment), their families, hospital staff, and willing donors who are never told that someone near them needs their blood type.
