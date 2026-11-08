@@ -141,23 +141,16 @@ features are listed below:
 
 | Device feature              | Purpose in the application                                                                                |
 | --------------------------- | --------------------------------------------------------------------------------------------------------- |
-| GPS / Location              | Helps identify nearby potential donors and blood donation centers, subject to user permission.            |
 | Push notifications          | Notifies donors about relevant blood requests, request updates, confirmations, and appointment reminders. |
-| Internet connectivity       | Allows users to register, submit blood requests, receive updates, and communicate with the system.        |
-| Camera                      | Can scan QR codes for donor identification or donation check-in if this feature is implemented.           |
 | Phone / contact integration | Can help users contact an authorized service or emergency contact, with the user's permission.            |
 
-Expected benefit: These device features can reduce communication delays, improve donor accessibility, and make donation coordination more efficient. Location, camera, and contact
-access will only be used with user permission.
+Expected benefit: These device features can reduce communication delays, improve donor accessibility, and make donation coordination more efficient. Contact access will only be used with user permission.
 
 ### 9.2 AI Features
 
-Artificial Intelligence (AI) can support the process of finding potential donors and communicating information to users. The proposed AI features are:
+Artificial Intelligence (AI) can support the process of finding potential donors and communicating information to users. The proposed AI feature is:
 
-1. **Intelligent donor matching**: Suggests potential donors using relevant information such as blood group, location, and stated availability. The system should apply verified blood compatibility rules and should not rely on AI to make medical compatibility decisions.
-2. **Smart notifications**: Sends relevant requests to potential donors based on their blood group, location, and notification preferences. This helps reduce irrelevant alerts and may improve response rates.
-3. **AI chatbot assistance**: Answers common questions about registration, submitting a blood request, and the donation process. It can provide general educational information and
-   direct medical questions to qualified healthcare professionals.
+- **Smart notifications**: Sends relevant requests to potential donors based on their blood group, location, and notification preferences. This helps reduce irrelevant alerts and may improve response rates.
 
 **Safety note**: AI will assist with suggestions and communication only. Donor eligibility, final blood compatibility checks, and all medical decisions must be confirmed by qualified healthcare professionals and established clinical procedures.
 
@@ -178,7 +171,7 @@ Artificial Intelligence (AI) can support the process of finding potential donors
 | Milestone | Week | User stories complete | What we deliver                                                                                                                                                                                                                                                                                                                                                                            |
 | --------- | ---- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 1         | 6    | 1–5, and 6 partly     | All seven screens with working navigation and in-memory state: register/sign in, donor profile, create request, home list, nearby donors, request detail and my requests. A test account can move through the whole flow, and requests and donors are held in memory only. Story 6 works as a button that flips a local flag.                                                              |
-| 2         | 10   | 1–7                   | Real data replaces the in-memory state. Firebase Auth for accounts, Firestore for donors and requests, and a REST service for blood-type compatibility and donor matching. Local persistence with `shared_preferences` keeps the signed-in session and last-known lists offline. Location-based nearby donors and the AI donor suggestion (stories 4 and 7) are connected to real records. |
+| 2         | 10   | 1–7                   |  Real data replaces the in-memory state. Firebase Auth for accounts, Firestore for donors and requests, and a REST service for blood-type compatibility and donor matching. Local persistence with `shared_preferences` keeps the signed-in session and last-known lists offline. Location-based nearby donors and the AI donor suggestion (stories 4 and 7) are connected to real records. |
 | Final     | 14   | 1–8                   | Story 8 (mark a request as fulfilled) and the notification flow are finished. We add tests for the matching and request logic, polish empty, loading and error states, finish the docs, and prepare the demo.                                                                                                                                                                              |
 
 Work runs in parallel rather than strictly milestone by milestone. Liya
@@ -191,7 +184,7 @@ starts.
 
 ## 12. AI-use plan
 
-Our team intends to use AI developer tools (GitHub Copilot, ChatGPT, and Claude) in accordance with the course policy in `../syllabus/policies.md`:
+Our team intends to use AI developer tools (GitHub Copilot, ChatGPT, and Claude) in accordance with the course policy in `mobile-application-development-course/syllabus/policies.md`:
 
 ### Intended Uses and Levels
 
