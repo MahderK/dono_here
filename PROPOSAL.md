@@ -24,22 +24,24 @@ An app that helps blood donation services and donors to coordinate and request d
 
 ## 3. The problem
 
-In Ethiopia, blood supply does not keep up with demand. Officials from the National Blood Bank Service say recruiting voluntary, unpaid donors is the main challenge, and that low awareness and fear are strong deterrents. The country also relies heavily on family surrogate and paid donors. Shortages get worse at certain times: the blood bank has declared nationwide shortages during the fasting seasons, when it sent text reminders to regular donors and appealed to new donors through the media. The shortage matters most for mothers and newborns, since reporting in Addis Fortune links the shortage of safe blood to higher maternal mortality.
+## 3. The problem
 
-The people affected are patients needing transfusions (surgery, accidents, childbirth complications, sickle cell disease, cancer treatment), their families, hospital staff, and willing donors who are never told that someone near them needs their blood type.
+In Ethiopia, blood supply does not keep up with demand. Officials from the National Blood Bank Service say recruiting voluntary, unpaid donors is the main challenge, because low awareness and fear deter people. The country relies heavily on family replacement and paid donors, and the blood bank has declared nationwide shortages during fasting seasons. The shortage matters most for mothers and newborns: Addis Fortune links the lack of safe blood to higher maternal mortality.
 
-When a patient needs blood in Addis Ababa today, the family usually goes to the hospital or blood bank and is often asked to bring donors themselves, called replacement donors. The family then phones relatives and friends, asks colleagues, or shares appeals in social media and messaging groups (Telegram and Facebook are widely used locally). The blood bank, for its part, relies on text messages to regular donors, media campaigns and mobile collection stations. This works poorly:
+Those affected are patients needing transfusions (surgery, accidents, childbirth complications, sickle cell disease, cancer treatment), their families, hospital staff, and willing donors who are never told that someone near them needs their blood type.
 
-- **It is slow.** Appeals spread by chance, and a request can go unseen for hours when the patient may not have hours.
-- **It is untargeted.** Most people who see a group post have the wrong blood type, live across the city, or gave blood recently and are not eligible.
+Today, a family in Addis Ababa is usually asked to bring replacement donors themselves. They phone relatives and friends or post appeals in Telegram and Facebook groups, while the blood bank relies on text messages to regular donors, media campaigns and mobile collection stations. This works poorly:
+
+- **It is slow and untargeted.** Appeals spread by chance and can go unseen for hours. Most people who see a group post have the wrong blood type, live across the city, or gave blood recently.
 - **It is hard to track.** Families cannot tell whether anyone is on the way, so appeals continue after the need is met, and donors cannot tell which requests are still open.
-- **It depends on personal networks.** Newcomers to Addis, such as students and migrants from other regions, have few contacts to ask and are left to the paid-donor route.
-- **It pushes people toward unsafe sources.** WHO has noted that relative replacement donors and paid donors posing as family carry a higher infection risk than repeat voluntary donors.
+- **It depends on personal networks and is unsafe.** Newcomers such as students and migrants have few contacts and are pushed toward paid donors. WHO notes that replacement and paid donors carry a higher infection risk than repeat voluntary donors.
 
-A mobile app fits this problem for three reasons. First, requests are urgent, and a phone is the one device people have on them, so a push notification can reach a matching donor within minutes. Second, matching depends on blood type, location and availability, and a phone can capture all three and filter by distance, which matters in a city with heavy traffic where a donor ten minutes from the hospital is far more useful than one an hour away. Third, one app serves both sides: a donor registers once and can be found whenever needed, and a requester can post, track and close a request in one place. This builds a pool of willing voluntary donors, which is the gap officials say they struggle to fill. It does not replace the blood bank but supports it.
+A mobile app fits because a phone is the one device people carry, so a push notification can reach a matching donor within minutes. It can also capture blood type, location and availability, which lets us filter by distance in a city where a donor ten minutes away is far more useful than one an hour away. And one app serves both sides: donors register once and can be found when needed, while requesters post, track and close a request in one place. This builds the pool of voluntary donors that officials say is hardest to recruit, and it supports the blood bank rather than replacing it.
 
 
 ## 4. Users
+
+**A real example.** Maereg Kassaw wanted to donate blood but did not know who to contact, and so did not know whether anyone needed their blood type or where to go. That willingness went unused. This is the gap DonoHere closes for donors: Maereg could register a blood type and area once, and requests that match would reach them directly.
 
 **Donors (primary users).** These are healthy adults in Addis Ababa who are willing to give blood. Many are university students, young professionals and past donors from campus or workplace drives. They need to register their blood type, area and availability quickly, see only open requests that match their type and are near them, and tell the requester they are coming. Usage is occasional but time-sensitive: a few times a week to check requests and update availability, and immediately when a matching request notification arrives.
 
