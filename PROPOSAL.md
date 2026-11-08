@@ -24,15 +24,36 @@ An app that helps blood donation services and donors to coordinate and request d
 
 ## 3. The problem
 
-_Who has this problem? How do they deal with it today? Why is a mobile
-app the right solution? Two or three paragraphs. If you have talked to a
-potential user, say what you learned._
+In Ethiopia, blood supply does not keep up with demand. Officials from the National Blood Bank Service say recruiting voluntary, unpaid donors is the main challenge, and that low awareness and fear are strong deterrents. The country also relies heavily on family surrogate and paid donors. Shortages get worse at certain times: the blood bank has declared nationwide shortages during the fasting seasons, when it sent text reminders to regular donors and appealed to new donors through the media. The shortage matters most for mothers and newborns, since reporting in Addis Fortune links the shortage of safe blood to higher maternal mortality.
+
+The people affected are patients needing transfusions (surgery, accidents, childbirth complications, sickle cell disease, cancer treatment), their families, hospital staff, and willing donors who are never told that someone near them needs their blood type.
+
+When a patient needs blood in Addis Ababa today, the family usually goes to the hospital or blood bank and is often asked to bring donors themselves, called replacement donors. The family then phones relatives and friends, asks colleagues, or shares appeals in social media and messaging groups (Telegram and Facebook are widely used locally). The blood bank, for its part, relies on text messages to regular donors, media campaigns and mobile collection stations. This works poorly:
+
+- **It is slow.** Appeals spread by chance, and a request can go unseen for hours when the patient may not have hours.
+- **It is untargeted.** Most people who see a group post have the wrong blood type, live across the city, or gave blood recently and are not eligible.
+- **It is hard to track.** Families cannot tell whether anyone is on the way, so appeals continue after the need is met, and donors cannot tell which requests are still open.
+- **It depends on personal networks.** Newcomers to Addis, such as students and migrants from other regions, have few contacts to ask and are left to the paid-donor route.
+- **It pushes people toward unsafe sources.** WHO has noted that relative replacement donors and paid donors posing as family carry a higher infection risk than repeat voluntary donors.
+
+A mobile app fits this problem for three reasons. First, requests are urgent, and a phone is the one device people have on them, so a push notification can reach a matching donor within minutes. Second, matching depends on blood type, location and availability, and a phone can capture all three and filter by distance, which matters in a city with heavy traffic where a donor ten minutes from the hospital is far more useful than one an hour away. Third, one app serves both sides: a donor registers once and can be found whenever needed, and a requester can post, track and close a request in one place. This builds a pool of willing voluntary donors, which is the gap officials say they struggle to fill. It does not replace the blood bank but supports it.
+
 
 ## 4. Users
 
-_Describe two or three types of user (for example, "a first-year student
-who does not know the campus" and "a club organiser who posts events").
-For each: what they need from the app and how often they would use it._
+**Donors (primary users).** These are healthy adults in Addis Ababa who are willing to give blood. Many are university students, young professionals and past donors from campus or workplace drives. They need to register their blood type, area and availability quickly, see only open requests that match their type and are near them, and tell the requester they are coming. Usage is occasional but time-sensitive: a few times a week to check requests and update availability, and immediately when a matching request notification arrives.
+
+**Requesters: patients' families and friends.** These are people who suddenly need blood for someone in a hospital such as Tikur Anbessa, St. Paul's or Yekatit 12. They are stressed, short of time and often asked to find their own donors. They need to post a request fast (blood type, units, hospital, urgency), see nearby donors with a matching type, and mark the request fulfilled. Usage is rare but intense: heavy use for a few hours or days, then little or none. The app must therefore work without any learning, with a short flow, simple wording, and Amharic language support so that people can use it comfortably under stress.
+
+**Requesters: blood donation services and hospital staff.** These include blood bank coordinators, hospital staff and organizers of donation drives, who regularly need specific blood types or must find donors for particular patients. They need to post requests, see available donors nearby, and receive suggested best matches so they do not check every profile. They are the heaviest users, likely opening the app daily during working hours to post, follow up and close requests.
+
+## Sources
+
+- [Addis Standard: nationwide blood shortage during fasting seasons](https://addisstandard.com/?p=26432)
+- [ENA: Low awareness hampering voluntary blood donation in Ethiopia](https://www.ena.et/web/eng/w/en_10564)
+- [Addis Fortune: Lifeline lockdown](https://addisfortune.news/lifeline-lockdown)
+- [WHO AFRO: Speech at the training workshop on blood donor recruitment](https://www.afro.who.int/pt/node/1120)
+
 
 ## 5. User stories
 
