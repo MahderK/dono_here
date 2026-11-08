@@ -39,13 +39,13 @@ A mobile app fits because a phone is the one device people carry, so a push noti
 
 ## 4. Users
 
-**A real example.** Maereg Kassaw wanted to donate blood but did not know who to contact, and so did not know whether anyone needed their blood type or where to go. That willingness went unused. This is the gap DonoHere closes for donors: Maereg could register a blood type and area once, and requests that match would reach them directly.
+- **A real example.** Maereg Kassaw wanted to donate blood but did not know who to contact, and so did not know whether anyone needed their blood type or where to go. That willingness went unused. This is the gap DonoHere closes for donors: Maereg could register a blood type and area once, and requests that match would reach them directly.
 
-**Donors (primary users).** These are healthy adults in Addis Ababa who are willing to give blood. Many are university students, young professionals and past donors from campus or workplace drives. They need to register their blood type, area and availability quickly, see only open requests that match their type and are near them, and tell the requester they are coming. Usage is occasional but time-sensitive: a few times a week to check requests and update availability, and immediately when a matching request notification arrives.
+- **Donors (primary users).** These are healthy adults in Addis Ababa who are willing to give blood. Many are university students, young professionals and past donors from campus or workplace drives. They need to register their blood type, area and availability quickly, see only open requests that match their type and are near them, and tell the requester they are coming. Usage is occasional but time-sensitive: a few times a week to check requests and update availability, and immediately when a matching request notification arrives.
 
-**Requesters: patients' families and friends.** These are people who suddenly need blood for someone in a hospital such as Tikur Anbessa, St. Paul's or Yekatit 12. They are stressed, short of time and often asked to find their own donors. They need to post a request fast (blood type, units, hospital, urgency), see nearby donors with a matching type, and mark the request fulfilled. Usage is rare but intense: heavy use for a few hours or days, then little or none. The app must therefore work without any learning, with a short flow, simple wording, and Amharic language support so that people can use it comfortably under stress.
+- **Requesters: patients' families and friends.** These are people who suddenly need blood for someone in a hospital such as Tikur Anbessa, St. Paul's or Yekatit 12. They are stressed, short of time and often asked to find their own donors. They need to post a request fast (blood type, units, hospital, urgency), see nearby donors with a matching type, and mark the request fulfilled. Usage is rare but intense: heavy use for a few hours or days, then little or none. The app must therefore work without any learning, with a short flow, simple wording, and Amharic language support so that people can use it comfortably under stress.
 
-**Requesters: blood donation services and hospital staff.** These include blood bank coordinators, hospital staff and organizers of donation drives, who regularly need specific blood types or must find donors for particular patients. They need to post requests, see available donors nearby, and receive suggested best matches so they do not check every profile. They are the heaviest users, likely opening the app daily during working hours to post, follow up and close requests.
+- **Requesters: blood donation services and hospital staff.** These include blood bank coordinators, hospital staff and organizers of donation drives, who regularly need specific blood types or must find donors for particular patients. They need to post requests, see available donors nearby, and receive suggested best matches so they do not check every profile. They are the heaviest users, likely opening the app daily during working hours to post, follow up and close requests.
 
 ## Sources
 
@@ -90,14 +90,14 @@ A mobile app fits because a phone is the one device people carry, so a push noti
 
 ## 7. Data model
 
-### Entities and their fields 
+### 7.1 Entities and their fields 
 
  1. User: id, fullName, email, phoneNumber, role, createdAt 
 2. DonorProfile:  id, userId, bloodType, area, lastDonation, latitude, longitude, isAvailable, isVisible, updatedAt
 3. BloodRequest: id, requesterId, bloodTypeNeeded, unitsNeeded, hospital, latitude, longitude, urgency, status, createdAt
 4. RequestResponse: id, requestId, donorId, status, createdAt 
 
-### Relationships between entities 
+### 7.2 Relationships between entities 
 
 1. One User can have one DonorProfile if they register as a donor. 
 2. One User can create multiple BloodRequests. 
@@ -107,20 +107,20 @@ A mobile app fits because a phone is the one device people carry, so a push noti
 
 ## 8. Data sources
 
-### 1. Local storage
+### 8.1 Local storage
 
 - **SharedPreferences**: Stores simple application preferences such as selected language, notification preferences, and user settings.
 
 - **Drift**: Stores locally cached data such as recently viewed open blood requests and previously retrieved nearby donor or request listings. This allows users to access previously loaded information when the internet connection is unavailable.
 
-### 2. REST API – Custom
+### 8.2 REST API – Custom
 
 - Find nearby donors based on the requested blood type and their availability.
 - Find nearby open blood requests that match a donor's blood type.
 - Suggest suitable donors based on blood type, distance, and availability.
 - Return matching results to the Flutter application.
 
-### 3. Firebase
+### 8.3 Firebase
 
 - **Firebase Authentication**: Handles user registration, login, and authentication.
 - **Cloud Firestore**: Stores user accounts, donor profiles, blood requests, and donor responses. It also keeps the application's data synchronized across users and devices.
@@ -179,19 +179,19 @@ starts.
 
 Our team intends to use AI developer tools (GitHub Copilot, ChatGPT, and Claude) in accordance with the course policy in `mobile-application-development-course/syllabus/policies.md`:
 
-### Intended Uses and Levels
+### 12.1 Intended Uses and Levels
 
 - **Learning and concept explanation (Level 1):** Clarifying unfamiliar Flutter/Riverpod mechanics, asynchronous Dart streams, and Firebase integration patterns.
 - **Code review and edge-case detection (Level 2):** Reviewing member-written code before opening pull requests to catch unhandled error states, missing semantics labels, or layout overflow risks.
 - **Boilerplate and test scaffolding (Level 3 - Draft and verify):** Generating repetitive boilerplate such as immutable Freezed model definitions, JSON serialization logic, and
   initial mock data for widget tests.
 
-### Tasks done without AI (Level 0)
+### 12.2 Tasks done without AI (Level 0)
 
 Core business logic (such as donor filtering and compatibility rules), Firebase security rules, and database schemas will be designed and implemented by the team by hand first
 before consulting any tool.
 
-### Verification and Compliance
+### 12.3 Verification and Compliance
 
 - **Verification:** Every AI-generated snippet will be verified line-by-line against the official Flutter documentation and tested against the project's automated test suite before merging.
 - **Disclosure:** We will track all significant AI assistance in `AI_USAGE.md` at each milestone, recording the prompt, what was changed, and how it was verified.
