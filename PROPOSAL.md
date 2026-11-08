@@ -89,6 +89,8 @@ most important screens (photos of paper sketches are fine)._
    <img src="sketches/donor screen.png" width="180" alt="Nearby donors screen">
    <img src="sketches/donor profile.png" width="180" alt="Donor profile screen"> 
    <img src="sketches/signin.png" width="180" alt="Donor profile screen"> 
+
+
 ## 7. Data model
 
 _The main entities and their fields, and how they relate. A simple
