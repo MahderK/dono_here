@@ -68,9 +68,6 @@ A mobile app fits this problem for three reasons. First, requests are urgent, an
 
 ## 6. Screens
 
-_List every screen with one line describing what it shows and which user
-stories it serves. Add hand-drawn or simple digital sketches for the four
-most important screens (photos of paper sketches are fine)._
 
 | Screen               | Purpose                                              | User stories |
 | -------------------- | ---------------------------------------------------- | ------------ |
@@ -93,14 +90,14 @@ most important screens (photos of paper sketches are fine)._
 
 ## 7. Data model
 
-Entities and their fields 
+### Entities and their fields 
 
  1. User: id, fullName, email, phoneNumber, role, createdAt 
 2. DonorProfile:  id, userId, bloodType, area, lastDonation, latitude, longitude, isAvailable, isVisible, updatedAt
 3. BloodRequest: id, requesterId, bloodTypeNeeded, unitsNeeded, hospital, latitude, longitude, urgency, status, createdAt
 4. RequestResponse: id, requestId, donorId, status, createdAt 
 
- Relationships between entities 
+### Relationships between entities 
 
 1. One User can have one DonorProfile if they register as a donor. 
 2. One User can create multiple BloodRequests. 
@@ -110,27 +107,23 @@ Entities and their fields
 
 ## 8. Data sources
 
-1. Local storage
+### 1. Local storage
 
-SharedPreferences: Stores simple application preferences such as selected language, notification preferences, and user settings.
+- **SharedPreferences**: Stores simple application preferences such as selected language, notification preferences, and user settings.
 
-Drift: Stores locally cached data such as recently viewed open blood requests and previously retrieved nearby donor or request listings. This allows users to access previously loaded information when the internet connection is unavailable.
+- **Drift**: Stores locally cached data such as recently viewed open blood requests and previously retrieved nearby donor or request listings. This allows users to access previously loaded information when the internet connection is unavailable.
 
-2. REST API – Custom
+### 2. REST API – Custom
 
-Find nearby donors based on the requested blood type and their availability.
+- Find nearby donors based on the requested blood type and their availability.
+- Find nearby open blood requests that match a donor's blood type.
+- Suggest suitable donors based on blood type, distance, and availability.
+- Return matching results to the Flutter application.
 
-Find nearby open blood requests that match a donor's blood type.
+### 3. Firebase
 
-Suggest suitable donors based on blood type, distance, and availability.
-
-Return matching results to the Flutter application.
-
-3. Firebase
-
-Firebase Authentication: Handles user registration, login, and authentication.
-
-Cloud Firestore: Stores user accounts, donor profiles, blood requests, and donor responses. It also keeps the application's data synchronized across users and devices.
+- **Firebase Authentication**: Handles user registration, login, and authentication.
+- **Cloud Firestore**: Stores user accounts, donor profiles, blood requests, and donor responses. It also keeps the application's data synchronized across users and devices.
 
 ## 9. Device feature and AI feature
 
