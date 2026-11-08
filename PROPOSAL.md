@@ -13,8 +13,6 @@ proposal under four pages.
 An app that helps blood donation services and donors to coordinate and request donations so that the process is more efficient and accessible.
 ## 2. Group
 
-*Student IDs, emails and GitHub usernames are in `project.yaml`; do not
-repeat them here.*
 
 | Name | Role |
 |---|---|
