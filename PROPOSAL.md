@@ -82,6 +82,13 @@ most important screens (photos of paper sketches are fine)._
 | Request detail       | Full request info, respond button, mark as fulfilled | 6, 8         |
 | My requests          | Requests I posted and their status                   | 3, 8         |
 
+   **Sketches of the main screens**
+
+   <img src="sketches/home screen.png" width="180" alt="Home screen: open requests">
+   <img src="sketches/requests .png" width="180" alt="Create request screen">
+   <img src="sketches/donor screen.png" width="180" alt="Nearby donors screen">
+   <img src="sketches/donor profile.png" width="180" alt="Donor profile screen"> 
+   <img src="sketches/signin.png" width="180" alt="Donor profile screen"> 
 ## 7. Data model
 
 _The main entities and their fields, and how they relate. A simple
