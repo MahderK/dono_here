@@ -1,18 +1,22 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class DonoHereApp extends StatelessWidget {
+import 'core/router/app_router.dart';
+
+class DonoHereApp extends ConsumerWidget {
   const DonoHereApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'DonoHere',
-      debugShowCheckedModeBanner: false,
+  Widget build(BuildContext context, WidgetRef ref) {
+    final router = ref.watch(appRouterProvider);
+
+    return MaterialApp.router(
+      title: 'Dono Here',
+      routerConfig: router,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.red),
         useMaterial3: true,
       ),
-      home: const Scaffold(body: Center(child: Text('DonoHere'))),
     );
   }
 }
