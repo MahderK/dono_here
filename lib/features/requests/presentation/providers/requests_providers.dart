@@ -54,6 +54,7 @@ class MyRequestsNotifier extends AsyncNotifier<List<BloodRequest>> {
     required BloodType bloodType,
     required int units,
     required String hospital,
+    required String area,
     required RequestUrgency urgency,
   }) async {
     final requesterId = ref.read(currentRequesterIdProvider);
@@ -66,6 +67,7 @@ class MyRequestsNotifier extends AsyncNotifier<List<BloodRequest>> {
       id: 'request-${now.microsecondsSinceEpoch}',
       requesterId: requesterId,
       hospital: hospital.trim(),
+      area: area.trim(),
       bloodTypeNeeded: bloodType,
       unitsNeeded: units,
       latitude: defaultRequestLatitude,

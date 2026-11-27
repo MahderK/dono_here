@@ -15,7 +15,9 @@ void main() {
     final before = await container.read(openRequestsProvider.future);
     expect(before.map((r) => r.id), contains('request-1'));
 
-    await container.read(myRequestsProvider.notifier).fulfillRequest('request-1');
+    await container
+        .read(myRequestsProvider.notifier)
+        .fulfillRequest('request-1');
 
     final open = await container.read(openRequestsProvider.future);
     expect(open.map((r) => r.id), isNot(contains('request-1')));
@@ -50,6 +52,7 @@ void main() {
           bloodType: BloodType.aNegative,
           units: 1,
           hospital: 'Black Lion',
+          area: 'Bole',
           urgency: RequestUrgency.low,
         );
 
@@ -95,7 +98,9 @@ void main() {
     expect(find.text('Fulfilled'), findsWidgets);
   });
 
-  testWidgets('detail hides the fulfil button from other users', (tester) async {
+  testWidgets('detail hides the fulfil button from other users', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [currentRequesterIdProvider.overrideWithValue('user-2')],

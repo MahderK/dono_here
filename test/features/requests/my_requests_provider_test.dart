@@ -20,6 +20,7 @@ void main() {
             bloodType: BloodType.bNegative,
             units: 3,
             hospital: '  St. Paul  ',
+            area: 'Bole',
             urgency: RequestUrgency.medium,
           );
 
