@@ -1,7 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-// Replace these imports with your project's actual paths if different:
-// import 'package:dono_here/features/auth/domain/entities/user.dart';
-// import 'package:dono_here/features/auth/domain/repositories/auth_repository.dart';
+
+import '../../../../core/providers/repository_providers.dart';
+import '../../../../domain/models/enums.dart';
+import '../../../../domain/models/user.dart';
 
 class AuthState {
   const AuthState({
@@ -10,12 +11,12 @@ class AuthState {
     this.errorMessage,
   });
 
-  final dynamic user; // Replace `dynamic` with `User?`
+  final User? user;
   final bool isLoading;
   final String? errorMessage;
 
   AuthState copyWith({
-    dynamic user,
+    User? user,
     bool clearUser = false,
     bool? isLoading,
     String? errorMessage,
@@ -38,16 +39,21 @@ class AuthNotifier extends Notifier<AuthState> {
     required String password,
   }) async {
     state = state.copyWith(isLoading: true, clearError: true);
+
     try {
-      // Call your AuthRepository method here, e.g.:
-      // final repo = ref.read(authRepositoryProvider);
-      // final user = await repo.signIn(email: email, password: password);
-      final user = {'email': email};
-      state = state.copyWith(user: user, isLoading: false);
-    } catch (e) {
+      final user = await ref.read(authRepositoryProvider).signIn(
+            email: email.trim(),
+            password: password,
+          );
+
+      state = state.copyWith(
+        user: user,
+        isLoading: false,
+      );
+    } catch (error) {
       state = state.copyWith(
         isLoading: false,
-        errorMessage: 'Sign in failed: $e',
+        errorMessage: _friendlyError(error),
       );
     }
   }
@@ -60,26 +66,49 @@ class AuthNotifier extends Notifier<AuthState> {
     required String password,
   }) async {
     state = state.copyWith(isLoading: true, clearError: true);
+
     try {
-      // Call your AuthRepository register method here
-      final user = {
-        'fullName': fullName,
-        'email': email,
-        'phoneNumber': phoneNumber,
-        'role': role,
-      };
-      state = state.copyWith(user: user, isLoading: false);
-    } catch (e) {
+      final userRole = UserRole.values.firstWhere(
+        (value) => value.name == role,
+        orElse: () => throw StateError('Unknown role: $role'),
+      );
+
+      final user = await ref.read(authRepositoryProvider).register(
+            fullName: fullName.trim(),
+            email: email.trim(),
+            phoneNumber: phoneNumber.trim(),
+            role: userRole,
+            password: password,
+          );
+
+      state = state.copyWith(
+        user: user,
+        isLoading: false,
+      );
+    } catch (error) {
       state = state.copyWith(
         isLoading: false,
-        errorMessage: 'Registration failed: $e',
+        errorMessage: _friendlyError(error),
       );
     }
   }
 
-  void signOut() {
-    state = state.copyWith(clearUser: true, clearError: true);
+  Future<void> signOut() async {
+    await ref.read(authRepositoryProvider).signOut();
+
+    state = state.copyWith(
+      clearUser: true,
+      clearError: true,
+      isLoading: false,
+    );
   }
 }
 
-final authProvider = NotifierProvider<AuthNotifier, AuthState>(AuthNotifier.new);
+String _friendlyError(Object error) {
+  if (error is StateError) return error.message;
+  return error.toString();
+}
+
+final authProvider = NotifierProvider<AuthNotifier, AuthState>(
+  AuthNotifier.new,
+);

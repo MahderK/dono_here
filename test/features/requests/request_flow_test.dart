@@ -7,9 +7,18 @@ import 'package:dono_here/features/requests/presentation/home_screen.dart';
 import 'package:dono_here/features/requests/presentation/providers/requests_providers.dart';
 import 'package:dono_here/features/requests/presentation/request_detail_screen.dart';
 
+ProviderScope _scopeFor(String userId, Widget child) {
+  return ProviderScope(
+    overrides: [currentRequesterIdProvider.overrideWithValue(userId)],
+    child: child,
+  );
+}
+
 void main() {
   test('fulfilling a request removes it from the open requests', () async {
-    final container = ProviderContainer();
+    final container = ProviderContainer(
+      overrides: [currentRequesterIdProvider.overrideWithValue('user-1')],
+    );
     addTearDown(container.dispose);
 
     final before = await container.read(openRequestsProvider.future);
@@ -40,7 +49,9 @@ void main() {
   });
 
   test('a newly created request shows up in the open requests', () async {
-    final container = ProviderContainer();
+    final container = ProviderContainer(
+      overrides: [currentRequesterIdProvider.overrideWithValue('user-1')],
+    );
     addTearDown(container.dispose);
 
     await container.read(openRequestsProvider.future);
@@ -59,7 +70,7 @@ void main() {
 
   testWidgets('Home lists open requests', (tester) async {
     await tester.pumpWidget(
-      const ProviderScope(child: MaterialApp(home: HomeScreen())),
+      _scopeFor('user-1', const MaterialApp(home: HomeScreen())),
     );
     await tester.pumpAndSettle();
 
@@ -70,8 +81,9 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(
-      const ProviderScope(
-        child: MaterialApp(home: RequestDetailScreen(requestId: 'request-1')),
+      _scopeFor(
+        'user-1',
+        const MaterialApp(home: RequestDetailScreen(requestId: 'request-1')),
       ),
     );
     await tester.pumpAndSettle();
@@ -109,8 +121,9 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(
-      const ProviderScope(
-        child: MaterialApp(home: RequestDetailScreen(requestId: 'nope')),
+      _scopeFor(
+        'user-1',
+        const MaterialApp(home: RequestDetailScreen(requestId: 'nope')),
       ),
     );
     await tester.pumpAndSettle();

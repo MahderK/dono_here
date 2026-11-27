@@ -1,28 +1,25 @@
+import 'package:dono_here/features/auth/presentation/providers/auth_provider.dart';
+import 'package:dono_here/features/auth/presentation/providers/current_user_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-// import 'package:dono_here/features/auth/presentation/providers/auth_provider.dart';
 
 void main() {
-  test('register and signIn update current user in authProvider', () async {
+  test('currentUserProvider follows the real auth session', () async {
     final container = ProviderContainer();
     addTearDown(container.dispose);
 
-    // Example if using authProvider:
-    // final notifier = container.read(authProvider.notifier);
-    // await notifier.register(
-    //   fullName: 'Siham Test',
-    //   email: 'siham@example.com',
-    //   phoneNumber: '+251900000000',
-    //   role: 'donor',
-    //   password: 'password123',
-    // );
-    // expect(container.read(authProvider).user, isNotNull);
+    expect(container.read(currentUserProvider), isNull);
 
-    // notifier.signOut();
-    // expect(container.read(authProvider).user, isNull);
+    await container.read(authProvider.notifier).signIn(
+          email: 'birhanu@example.com',
+          password: 'password123',
+        );
 
-    // await notifier.signIn(email: 'siham@example.com', password: 'password123');
-    // expect(container.read(authProvider).user, isNotNull);
-    expect(container, isNotNull);
+    expect(container.read(currentUserProvider)?.id, 'user-2');
+    expect(container.read(currentUserProvider)?.email, 'birhanu@example.com');
+
+    await container.read(authProvider.notifier).signOut();
+
+    expect(container.read(currentUserProvider), isNull);
   });
 }

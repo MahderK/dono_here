@@ -1,76 +1,53 @@
-import 'package:flutter/material.dart';
+import 'package:dono_here/domain/models/enums.dart';
+import 'package:dono_here/features/requests/presentation/providers/requests_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-final _myRequestsProvider = StateProvider<List<String>>((ref) => const []);
-
-class _CreateAndListHarness extends ConsumerStatefulWidget {
-  const _CreateAndListHarness();
-
-  @override
-  ConsumerState<_CreateAndListHarness> createState() => _CreateAndListHarnessState();
-}
-
-class _CreateAndListHarnessState extends ConsumerState<_CreateAndListHarness> {
-  final _hospitalCtrl = TextEditingController();
-
-  @override
-  void dispose() {
-    _hospitalCtrl.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final items = ref.watch(_myRequestsProvider);
-    return Scaffold(
-      body: Column(
-        children: [
-          TextField(
-            controller: _hospitalCtrl,
-            decoration: const InputDecoration(labelText: 'Hospital'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              final text = _hospitalCtrl.text.trim();
-              if (text.isNotEmpty) {
-                ref.read(_myRequestsProvider.notifier).update((s) => [...s, text]);
-              }
-            },
-            child: const Text('Post Request'),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: items.length,
-              itemBuilder: (_, i) => ListTile(title: Text(items[i])),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+ProviderContainer signedInContainer() {
+  final container = ProviderContainer(
+    overrides: [currentRequesterIdProvider.overrideWithValue('user-1')],
+  );
+  addTearDown(container.dispose);
+  return container;
 }
 
 void main() {
-  testWidgets('submitting a request adds it to My Requests list', (tester) async {
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          _myRequestsProvider.overrideWith((ref) => const ['Initial Hospital']),
-        ],
-        child: const MaterialApp(home: _CreateAndListHarness()),
-      ),
+  test('submitting a request adds it to My Requests and Home', () async {
+    final container = signedInContainer();
+    await container.read(myRequestsProvider.future);
+
+    final created = await container
+        .read(myRequestsProvider.notifier)
+        .createRequest(
+          bloodType: BloodType.oNegative,
+          units: 2,
+          hospital: 'St. Paul Hospital',
+          urgency: RequestUrgency.critical,
+        );
+
+    expect(created.requesterId, 'user-1');
+    expect(created.hospital, 'St. Paul Hospital');
+    expect(created.status, RequestStatus.open);
+
+    final mine = await container.read(myRequestsProvider.future);
+    expect(mine.map((request) => request.id), contains(created.id));
+
+    final open = await container.read(openRequestsProvider.future);
+    expect(open.map((request) => request.id), contains(created.id));
+  });
+
+  test('a signed-out requester cannot create a request', () async {
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
+
+    await expectLater(
+      container.read(myRequestsProvider.notifier).createRequest(
+            bloodType: BloodType.oPositive,
+            units: 1,
+            hospital: 'Tikur Anbessa',
+            urgency: RequestUrgency.low,
+          ),
+      throwsA(isA<StateError>()),
     );
-
-    expect(find.text('Initial Hospital'), findsOneWidget);
-
-    await tester.enterText(
-      find.widgetWithText(TextField, 'Hospital'),
-      'St. Paul Hospital',
-    );
-    await tester.tap(find.text('Post Request'));
-    await tester.pump();
-
-    expect(find.text('St. Paul Hospital'), findsOneWidget);
   });
 }
