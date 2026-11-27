@@ -38,24 +38,27 @@
 
 ---
 
-## 3. Group Self-Score (10-Point Checklist)
+## 3. Group Self-Score (Mini-Rubric)
 
-1. **All 7 proposal screens exist and are reachable via `go_router` (1/1):** Every screen (`/sign-in`, `/home`, `/profile`, `/my-requests`, `/requests/new`, `/requests/:id`, `/requests/:id/donors`) is wired in `lib/core/router/app_router.dart` (PR #14).
-2. **Shell navigation & detail route parameters (1/1):** `StatefulShellRoute.indexedStack` powers the 3-tab bottom navigation bar, and detail/matching routes read the `:id` path parameter (PR #14, #17, #19, #22).
-3. **Riverpod state management — no app/domain state in widgets (1/1):** Auth session, donor profile, blood requests, and matching logic are managed through Riverpod providers/notifiers rather than widget `setState` (PRs #15–#22).
-4. **Freezed models & in-memory repos behind interfaces (1/1):** All domain entities use `freezed`, and in-memory implementations sit behind abstract repository interfaces exposed via Riverpod providers (PR #15).
-5. **Core user stories implemented in memory (1/1):** Sign-in/register, donor profile, creating/viewing/fulfilling requests, responding as a donor, and viewing nearby matching donors all work end-to-end in memory (PRs #16–#22).
-6. **At least 5 meaningful unit/widget tests (1/1):** Unit and widget tests covering repositories, providers, and UI flows were added and pass (PR #21).
-7. **`flutter analyze --fatal-infos` clean (1/1):** Analyzer runs with zero errors, warnings, or infos (output pasted below).
-8. **`flutter test` passes (1/1):** All unit and widget tests pass cleanly (output pasted below).
-9. **PR workflow & team collaboration (1/1):** All work was merged via feature branches and reviewed pull requests (#13–#22) with no direct commits to `main`.
-10. **Documentation & transparency (`MILESTONE.md` & `AI_USAGE.md`) (1/1):** Both required documents are included with PR links, self-score evidence, AI usage logs, and real command outputs.
+| Criterion | Max | Self-Score | Evidence |
+|---|---|---|---|
+| All proposed screens present and navigable | 3 | 3 | All 7 proposal screens (`/sign-in`, `/home`, `/profile`, `/my-requests`, `/requests/new`, `/requests/:id`, `/requests/:id/donors`) are wired in `go_router` with `StatefulShellRoute.indexedStack` bottom navigation and `:id` path parameters (PR #14, #16–#22). |
+| Feature-first structure; state in providers, not widgets | 2 | 2 | The codebase follows `lib/core` and `lib/features/<feature>/{domain,data,presentation}`, with `freezed` models, abstract in-memory repositories, and all application state managed in Riverpod providers (PR #13, #15–#22). |
+| Tests present; analyser and tests clean in the pasted output | 1 | 1 | Unit and widget tests cover repositories, providers, and UI flows, and both `flutter analyze --fatal-infos` and `flutter test` pass cleanly in the pasted output below (PR #15, #18–#22). |
+| Repository hygiene: branches, pull requests, readable history | 1 | 1 | All work was developed on dedicated feature branches, reviewed by teammates, and merged via pull requests (#13–#22) with clear commit messages and no direct commits to `main`. |
+| Individual oral check (recorded per member) | 3 | *(Pending TA)* | To be assessed individually by the TA in the lab following the Milestone 1 deadline. |
 
-**Total Self-Score: 10 / 10**
+**Group Deliverable Self-Score:** 7 / 7 *(+ 3 points pending individual oral check)*
 
 ---
 
-## 4. Verification Output
+## 4. One Thing We Will Change Before Milestone 2
+
+Write unit and widget tests alongside each feature PR and align on `.gitignore` and Flutter SDK/import conventions upfront so every branch stays clean and passes `flutter analyze --fatal-infos` before review.
+
+---
+
+## 5. Verification Output
 
 ### `flutter analyze --fatal-infos`
 ```text
