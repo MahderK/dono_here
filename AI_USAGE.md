@@ -65,6 +65,13 @@
 - **What I changed:** Applied relevant guidance while working on the assigned screens and functionality.
 - **Verification:** Reviewed the implementation against the assigned requirements.
 
+### Auth Flow
+- **Member:** Siham Tewekel
+- **AI-use level:** 2
+- **AI assistance:** AI was used for explanations and troubleshooting while implementing the Riverpod auth state, the Sign In / Register form, and the router redirect guard, and to help draft the related unit and widget tests.
+- **What I changed:** Implemented `AuthNotifier`/`AuthState`, the Sign In / Register screen with validation and loading/error states, the `register` repository method, and the auth redirect; added auth session and form tests using `ProviderScope` overrides and cleaned up analyzer issues.
+- **Verification:** Ran `flutter analyze --fatal-infos` and `flutter test`, and manually verified sign-in, registration, sign-out, and redirect behavior.
+
 ---
 
 ## Individual Declarations
