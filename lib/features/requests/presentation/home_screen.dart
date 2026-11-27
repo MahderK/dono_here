@@ -1,13 +1,18 @@
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../core/router/routes.dart';
+import '../../../core/utils/enum_labels.dart';
+import 'providers/requests_providers.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final requests = ref.watch(openRequestsProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home (Open Requests)'),
@@ -18,22 +23,47 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            FilledButton(
-              onPressed: () => context.push(AppRoutes.createRequest),
-              child: const Text('Create Request'),
-            ),
-            const SizedBox(height: 12),
-            OutlinedButton(
-              onPressed: () =>
-                  context.push(AppRoutes.requestDetailPath('req-101')),
-              child: const Text('Open Sample Request (req-101)'),
-            ),
-          ],
-        ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => context.push(AppRoutes.createRequest),
+        icon: const Icon(Icons.add),
+        label: const Text('Create Request'),
+      ),
+      body: requests.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, _) =>
+            Center(child: Text('Could not load requests: $error')),
+        data: (items) {
+          if (items.isEmpty) {
+            return const Center(
+              child: Padding(
+                padding: EdgeInsets.all(24),
+                child: Text(
+                  'No open requests right now.',
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            );
+          }
+          return ListView.builder(
+            padding: const EdgeInsets.all(12),
+            itemCount: items.length,
+            itemBuilder: (context, index) {
+              final request = items[index];
+              return Card(
+                child: ListTile(
+                  title: Text(request.hospital),
+                  subtitle: Text(
+                    '${request.bloodTypeNeeded.label} • '
+                    '${request.unitsNeeded} unit(s)',
+                  ),
+                  trailing: Chip(label: Text(request.urgency.label)),
+                  onTap: () =>
+                      context.push(AppRoutes.requestDetailPath(request.id)),
+                ),
+              );
+            },
+          );
+        },
       ),
     );
   }

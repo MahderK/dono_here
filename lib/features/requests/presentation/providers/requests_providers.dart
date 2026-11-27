@@ -16,6 +16,22 @@ const double defaultRequestLongitude = 38.7400;
 /// the requests feature needs to change. Tests override this provider.
 final currentRequesterIdProvider = Provider<String?>((ref) => 'user-1');
 
+/// All open requests, newest first (shown on Home).
+final openRequestsProvider = FutureProvider<List<BloodRequest>>((ref) async {
+  final requests = await ref
+      .watch(bloodRequestRepositoryProvider)
+      .getOpenRequests();
+  return [...requests]..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+});
+
+/// One request by id (shown on the detail screen). `null` means not found.
+final requestDetailProvider = FutureProvider.family<BloodRequest?, String>((
+  ref,
+  id,
+) {
+  return ref.watch(bloodRequestRepositoryProvider).getRequest(id);
+});
+
 /// The signed-in user's own blood requests, newest first.
 final myRequestsProvider =
     AsyncNotifierProvider<MyRequestsNotifier, List<BloodRequest>>(
@@ -33,7 +49,7 @@ class MyRequestsNotifier extends AsyncNotifier<List<BloodRequest>> {
     return [...requests]..sort((a, b) => b.createdAt.compareTo(a.createdAt));
   }
 
-  /// Creates an open request owned by the current user and refreshes the list.
+  /// Creates an open request owned by the current user and refreshes the lists.
   Future<BloodRequest> createRequest({
     required BloodType bloodType,
     required int units,
@@ -63,7 +79,31 @@ class MyRequestsNotifier extends AsyncNotifier<List<BloodRequest>> {
         .read(bloodRequestRepositoryProvider)
         .saveRequest(request);
     ref.invalidateSelf();
+    ref.invalidate(openRequestsProvider);
     await future;
     return saved;
+  }
+
+  /// Marks one of the current user's requests as fulfilled and refreshes
+  /// every list that shows it (My Requests, Home, detail).
+  Future<void> fulfillRequest(String requestId) async {
+    final requesterId = ref.read(currentRequesterIdProvider);
+    final repository = ref.read(bloodRequestRepositoryProvider);
+
+    final request = await repository.getRequest(requestId);
+    if (request == null) {
+      throw StateError('Request not found.');
+    }
+    if (requesterId == null || request.requesterId != requesterId) {
+      throw StateError('Only the requester can mark a request as fulfilled.');
+    }
+
+    await repository.saveRequest(
+      request.copyWith(status: RequestStatus.fulfilled),
+    );
+    ref.invalidateSelf();
+    ref.invalidate(openRequestsProvider);
+    ref.invalidate(requestDetailProvider(requestId));
+    await future;
   }
 }
