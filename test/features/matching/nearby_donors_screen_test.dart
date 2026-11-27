@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart' as flutter;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -7,7 +8,10 @@ import 'package:dono_here/data/repositories/in_memory_store.dart';
 import 'package:dono_here/domain/models/blood_request.dart';
 import 'package:dono_here/domain/models/donor_profile.dart';
 import 'package:dono_here/domain/models/enums.dart';
+import 'package:dono_here/features/auth/presentation/providers/auth_provider.dart';
 import 'package:dono_here/features/matching/presentation/nearby_donors_screen.dart';
+import 'package:dono_here/features/requests/presentation/home_screen.dart';
+import 'package:dono_here/features/requests/presentation/request_detail_screen.dart';
 
 void main() {
   final t0 = DateTime.utc(2026, 1, 1);
@@ -120,5 +124,114 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Request not found'), findsOneWidget);
+  });
+
+  Future<ProviderContainer> signedInContainer(String email) async {
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
+    await container.read(authProvider.notifier).signIn(
+          email: email,
+          password: 'password123',
+        );
+    return container;
+  }
+
+  Widget screenWith(ProviderContainer container, Widget child) {
+    return UncontrolledProviderScope(
+      container: container,
+      child: MaterialApp(
+        localizationsDelegates: const [
+          flutter.DefaultMaterialLocalizations.delegate,
+        ],
+        home: child,
+      ),
+    );
+  }
+
+  testWidgets('signed-in requester sees only donors matching the request', (
+    tester,
+  ) async {
+    final container = await signedInContainer('ada@example.com');
+
+    await tester.pumpWidget(
+      screenWith(container, const NearbyDonorsScreen(requestId: 'request-1')),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('Tikur Anbessa · O+'), findsOneWidget);
+    expect(find.text('Bole'), findsOneWidget);
+    expect(find.text('Piassa'), findsNothing);
+  });
+
+  testWidgets('Home shows the matching request to an O+ donor', (tester) async {
+    final container = await signedInContainer('birhanu@example.com');
+
+    await tester.pumpWidget(screenWith(container, const HomeScreen()));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Tikur Anbessa'), findsOneWidget);
+  });
+
+  testWidgets('Home hides a non-matching request from an A+ donor', (
+    tester,
+  ) async {
+    final container = await signedInContainer('chaltu@example.com');
+
+    await tester.pumpWidget(screenWith(container, const HomeScreen()));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Tikur Anbessa'), findsNothing);
+  });
+
+  testWidgets('a signed-in donor can respond to a request', (tester) async {
+    final container = await signedInContainer('birhanu@example.com');
+
+    await tester.pumpWidget(
+      screenWith(container, const RequestDetailScreen(requestId: 'request-1')),
+    );
+    await tester.pumpAndSettle();
+
+    final respond = find.text('Respond');
+    expect(respond, findsOneWidget);
+
+    await tester.tap(respond);
+    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 5));
+    await tester.pumpAndSettle();
+
+    expect(find.text('You already responded to this request.'), findsOneWidget);
+
+    final responses = await container
+        .read(matchingRepositoryProvider)
+        .getResponses('request-1');
+    expect(responses.map((r) => r.donorId), contains('donor-1'));
+  });
+
+  testWidgets('requester sees that a donor responded on request detail', (
+    tester,
+  ) async {
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
+
+    await container.read(authProvider.notifier).signIn(
+          email: 'birhanu@example.com',
+          password: 'password123',
+        );
+    await container.read(matchingRepositoryProvider).respondToRequest(
+          requestId: 'request-1',
+          donorId: 'donor-1',
+        );
+    await container.read(authProvider.notifier).signOut();
+    await container.read(authProvider.notifier).signIn(
+          email: 'ada@example.com',
+          password: 'password123',
+        );
+
+    await tester.pumpWidget(
+      screenWith(container, const RequestDetailScreen(requestId: 'request-1')),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('1 donor(s) responded'), findsOneWidget);
   });
 }
