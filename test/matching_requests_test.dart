@@ -3,6 +3,9 @@ import 'package:dono_here/domain/models/donor_profile.dart';
 import 'package:dono_here/domain/models/enums.dart';
 import 'package:dono_here/features/donor/presentation/providers/matching_requests_providers.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:dono_here/core/providers/repository_providers.dart';
+import 'package:dono_here/features/requests/presentation/providers/requests_providers.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 BloodRequest _request({
   required String id,
@@ -50,6 +53,27 @@ void main() {
       );
       expect(result.map((r) => r.id), ['match']);
     });
+
+    test('matching list drops a request once it is fulfilled', () async {
+    // user-2 is the seeded O+ donor; request-1 is an open O+ request.
+    final container = ProviderContainer(
+      overrides: [currentRequesterIdProvider.overrideWithValue('user-2')],
+    );
+    addTearDown(container.dispose);
+
+    var items = await container.read(matchingRequestsProvider.future);
+    expect(items.map((i) => i.request.id), contains('request-1'));
+
+    final repository = container.read(bloodRequestRepositoryProvider);
+    final request = (await repository.getRequest('request-1'))!;
+    await repository.saveRequest(
+      request.copyWith(status: RequestStatus.fulfilled),
+    );
+    container.invalidate(openRequestsProvider);
+
+    items = await container.read(matchingRequestsProvider.future);
+    expect(items.map((i) => i.request.id), isNot(contains('request-1')));
+  });
 
     test('hides the donor own requests', () {
       final result = filterRequestsForDonor(
