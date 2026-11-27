@@ -2,14 +2,29 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+import 'package:dono_here/data/seed/seed_data.dart';
 import 'package:dono_here/domain/models/enums.dart';
+import 'package:dono_here/features/auth/presentation/providers/current_user_provider.dart';
 import 'package:dono_here/features/requests/presentation/home_screen.dart';
 import 'package:dono_here/features/requests/presentation/providers/requests_providers.dart';
 import 'package:dono_here/features/requests/presentation/request_detail_screen.dart';
 
+ProviderScope _scopeFor(String userId, Widget child) {
+  final user = SeedData.sample().users.firstWhere((u) => u.id == userId);
+  return ProviderScope(
+    overrides: [
+      currentRequesterIdProvider.overrideWithValue(userId),
+      currentUserProvider.overrideWith((ref) => user),
+    ],
+    child: child,
+  );
+}
+
 void main() {
   test('fulfilling a request removes it from the open requests', () async {
-    final container = ProviderContainer();
+    final container = ProviderContainer(
+      overrides: [currentRequesterIdProvider.overrideWithValue('user-1')],
+    );
     addTearDown(container.dispose);
 
     final before = await container.read(openRequestsProvider.future);
@@ -42,7 +57,9 @@ void main() {
   });
 
   test('a newly created request shows up in the open requests', () async {
-    final container = ProviderContainer();
+    final container = ProviderContainer(
+      overrides: [currentRequesterIdProvider.overrideWithValue('user-1')],
+    );
     addTearDown(container.dispose);
 
     await container.read(openRequestsProvider.future);
@@ -64,10 +81,7 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(
-      ProviderScope(
-        overrides: [currentRequesterIdProvider.overrideWithValue('user-2')],
-        child: const MaterialApp(home: HomeScreen()),
-      ),
+      _scopeFor('user-2', const MaterialApp(home: HomeScreen())),
     );
     await tester.pumpAndSettle();
 
@@ -78,8 +92,9 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(
-      const ProviderScope(
-        child: MaterialApp(home: RequestDetailScreen(requestId: 'request-1')),
+      _scopeFor(
+        'user-1',
+        const MaterialApp(home: RequestDetailScreen(requestId: 'request-1')),
       ),
     );
     await tester.pumpAndSettle();
@@ -102,9 +117,9 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(
-      ProviderScope(
-        overrides: [currentRequesterIdProvider.overrideWithValue('user-2')],
-        child: const MaterialApp(
+      _scopeFor(
+        'user-2',
+        const MaterialApp(
           home: RequestDetailScreen(requestId: 'request-1'),
         ),
       ),
@@ -119,8 +134,9 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(
-      const ProviderScope(
-        child: MaterialApp(home: RequestDetailScreen(requestId: 'nope')),
+      _scopeFor(
+        'user-1',
+        const MaterialApp(home: RequestDetailScreen(requestId: 'nope')),
       ),
     );
     await tester.pumpAndSettle();
@@ -128,7 +144,7 @@ void main() {
     expect(find.text('Request not found'), findsOneWidget);
   });
 
-    testWidgets('Home asks a user without a donor profile to complete it', (
+  testWidgets('Home asks a user without a donor profile to complete it', (
     tester,
   ) async {
     // Default user-1 has no donor profile.
@@ -143,9 +159,9 @@ void main() {
 
   testWidgets('a matching donor can respond to a request', (tester) async {
     await tester.pumpWidget(
-      ProviderScope(
-        overrides: [currentRequesterIdProvider.overrideWithValue('user-2')],
-        child: const MaterialApp(
+      _scopeFor(
+        'user-2',
+        const MaterialApp(
           home: RequestDetailScreen(requestId: 'request-1'),
         ),
       ),
@@ -165,4 +181,3 @@ void main() {
     expect(find.text('You already responded to this request.'), findsOneWidget);
   });
 }
-

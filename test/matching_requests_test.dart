@@ -1,6 +1,8 @@
+import 'package:dono_here/data/seed/seed_data.dart';
 import 'package:dono_here/domain/models/blood_request.dart';
 import 'package:dono_here/domain/models/donor_profile.dart';
 import 'package:dono_here/domain/models/enums.dart';
+import 'package:dono_here/features/auth/presentation/providers/current_user_provider.dart';
 import 'package:dono_here/features/donor/presentation/providers/matching_requests_providers.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:dono_here/core/providers/repository_providers.dart';
@@ -57,7 +59,12 @@ void main() {
     test('matching list drops a request once it is fulfilled', () async {
     // user-2 is the seeded O+ donor; request-1 is an open O+ request.
     final container = ProviderContainer(
-      overrides: [currentRequesterIdProvider.overrideWithValue('user-2')],
+      overrides: [
+        currentRequesterIdProvider.overrideWithValue('user-2'),
+        currentUserProvider.overrideWith(
+          (ref) => SeedData.sample().users[1],
+        ),
+      ],
     );
     addTearDown(container.dispose);
 
