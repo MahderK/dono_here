@@ -5,6 +5,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../../core/router/routes.dart';
 import '../../../core/utils/enum_labels.dart';
 import '../../../domain/models/enums.dart';
+import '../../donor/presentation/widgets/respond_section.dart';
 import 'providers/requests_providers.dart';
 
 class RequestDetailScreen extends ConsumerWidget {
@@ -81,7 +82,8 @@ class RequestDetailScreen extends ConsumerWidget {
                     context.push(AppRoutes.nearbyDonorsPath(requestId)),
                 child: const Text('View Nearby Donors'),
               ),
-              // The donor "respond" section is added below by the donor-side PR.
+              const SizedBox(height: 12),
+              RespondSection(request: item),
             ],
           );
         },
