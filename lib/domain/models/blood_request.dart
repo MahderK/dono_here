@@ -10,6 +10,7 @@ abstract class BloodRequest with _$BloodRequest {
     required String id,
     required String requesterId,
     required String hospital,
+    @Default('') String area,
     required BloodType bloodTypeNeeded,
     required int unitsNeeded,
     required double latitude,

@@ -80,6 +80,7 @@ class SeedData {
           bloodTypeNeeded: BloodType.oPositive,
           unitsNeeded: 2,
           hospital: 'Tikur Anbessa',
+          area: 'Bole',
           latitude: 9.0150,
           longitude: 38.7600,
           urgency: RequestUrgency.critical,

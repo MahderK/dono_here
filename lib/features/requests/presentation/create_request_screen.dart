@@ -20,6 +20,7 @@ class _CreateRequestScreenState extends ConsumerState<CreateRequestScreen> {
   // The request itself is saved through myRequestsProvider.
   final _formKey = GlobalKey<FormState>();
   final _hospitalController = TextEditingController();
+  final _areaController = TextEditingController();
   final _unitsController = TextEditingController(text: '1');
   BloodType? _bloodType;
   RequestUrgency _urgency = RequestUrgency.medium;
@@ -27,6 +28,7 @@ class _CreateRequestScreenState extends ConsumerState<CreateRequestScreen> {
   @override
   void dispose() {
     _hospitalController.dispose();
+    _areaController.dispose();
     _unitsController.dispose();
     super.dispose();
   }
@@ -44,6 +46,7 @@ class _CreateRequestScreenState extends ConsumerState<CreateRequestScreen> {
             bloodType: _bloodType!,
             units: int.parse(_unitsController.text.trim()),
             hospital: _hospitalController.text,
+            area: _areaController.text,
             urgency: _urgency,
           );
       if (!mounted) return;
@@ -114,6 +117,20 @@ class _CreateRequestScreenState extends ConsumerState<CreateRequestScreen> {
               },
             ),
             const SizedBox(height: 16),
+            TextFormField(
+              controller: _areaController,
+              textCapitalization: TextCapitalization.words,
+              decoration: const InputDecoration(
+                labelText: 'Area / city (used for nearby matching)',
+                border: OutlineInputBorder(),
+              ),
+              validator: (value) {
+                final area = (value ?? '').trim();
+                if (area.isEmpty) return 'Enter an area';
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
             DropdownButtonFormField<RequestUrgency>(
               initialValue: _urgency,
               decoration: const InputDecoration(
@@ -130,7 +147,8 @@ class _CreateRequestScreenState extends ConsumerState<CreateRequestScreen> {
             ),
             const SizedBox(height: 8),
             const Text(
-              'Location: central Addis Ababa (default for Milestone 1).',
+              'Location: central Addis Ababa (default for Milestone 1). '
+              'Nearby matching uses the area text above.',
             ),
             const SizedBox(height: 24),
             FilledButton(
