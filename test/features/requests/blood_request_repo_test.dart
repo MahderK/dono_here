@@ -1,96 +1,75 @@
+import 'package:dono_here/data/repositories/in_memory_blood_request_repository.dart';
+import 'package:dono_here/data/repositories/in_memory_store.dart';
+import 'package:dono_here/data/seed/seed_data.dart';
+import 'package:dono_here/domain/models/blood_request.dart';
+import 'package:dono_here/domain/models/enums.dart';
 import 'package:flutter_test/flutter_test.dart';
-// Replace with your real repo & model imports when ready:
-// import 'package:dono_here/features/requests/data/repositories/in_memory_blood_request_repository.dart';
-// import 'package:dono_here/features/requests/domain/entities/blood_request.dart';
 
-class _TestRequest {
-  _TestRequest({
-    required this.id,
-    required this.hospital,
-    required this.bloodType,
-    required this.units,
-    this.status = 'open',
-    this.respondedDonorIds = const [],
-  });
-
-  final String id;
-  final String hospital;
-  final String bloodType;
-  final int units;
-  final String status;
-  final List<String> respondedDonorIds;
-
-  _TestRequest copyWith({
-    String? status,
-    List<String>? respondedDonorIds,
-  }) {
-    return _TestRequest(
-      id: id,
-      hospital: hospital,
-      bloodType: bloodType,
-      units: units,
-      status: status ?? this.status,
-      respondedDonorIds: respondedDonorIds ?? this.respondedDonorIds,
-    );
-  }
+InMemoryBloodRequestRepository repositoryWithSeed() {
+  final seed = SeedData.sample();
+  return InMemoryBloodRequestRepository(
+    InMemoryStore(
+      users: seed.users,
+      donorProfiles: seed.donorProfiles,
+      bloodRequests: seed.bloodRequests,
+      responses: seed.responses,
+    ),
+  );
 }
 
-class _InMemoryRequestStore {
-  final Map<String, _TestRequest> _items = {};
-  int _seq = 0;
-
-  _TestRequest create({
-    required String hospital,
-    required String bloodType,
-    required int units,
-  }) {
-    final id = 'req_${++_seq}';
-    final req = _TestRequest(
-      id: id,
-      hospital: hospital,
-      bloodType: bloodType,
-      units: units,
-    );
-    _items[id] = req;
-    return req;
-  }
-
-  void respond(String requestId, String donorId) {
-    final current = _items[requestId];
-    if (current == null) return;
-    _items[requestId] = current.copyWith(
-      respondedDonorIds: [...current.respondedDonorIds, donorId],
-    );
-  }
-
-  void fulfill(String requestId) {
-    final current = _items[requestId];
-    if (current == null) return;
-    _items[requestId] = current.copyWith(status: 'fulfilled');
-  }
-
-  _TestRequest? getById(String requestId) => _items[requestId];
+BloodRequest newRequest({required String requesterId}) {
+  return BloodRequest(
+    id: 'request-test',
+    requesterId: requesterId,
+    hospital: 'St. Paul Hospital',
+    bloodTypeNeeded: BloodType.aNegative,
+    unitsNeeded: 3,
+    latitude: 9.03,
+    longitude: 38.74,
+    urgency: RequestUrgency.medium,
+    status: RequestStatus.open,
+    createdAt: DateTime.utc(2026, 2, 1),
+  );
 }
 
 void main() {
-  test('creates a request, records donor response, and marks fulfilled', () {
-    final store = _InMemoryRequestStore();
+  test('getOpenRequests returns only open requests', () async {
+    final repository = repositoryWithSeed();
 
-    final created = store.create(
-      hospital: 'Tikur Anbessa',
-      bloodType: 'O+',
-      units: 2,
+    expect((await repository.getOpenRequests()).map((r) => r.id), [
+      'request-1',
+    ]);
+  });
+
+  test('getRequestsByRequester filters by requesterId', () async {
+    final repository = repositoryWithSeed();
+
+    expect(
+      (await repository.getRequestsByRequester('user-1')).map((r) => r.id),
+      ['request-1'],
     );
-    expect(created.id, isNotEmpty);
-    expect(created.status, 'open');
-    expect(created.respondedDonorIds, isEmpty);
+    expect(
+      await repository.getRequestsByRequester('user-2'),
+      isEmpty,
+    );
+  });
 
-    store.respond(created.id, 'donor_42');
-    final afterRespond = store.getById(created.id)!;
-    expect(afterRespond.respondedDonorIds, contains('donor_42'));
+  test('saveRequest stores and updates a request', () async {
+    final repository = repositoryWithSeed();
+    final created = newRequest(requesterId: 'user-2');
 
-    store.fulfill(created.id);
-    final afterFulfill = store.getById(created.id)!;
-    expect(afterFulfill.status, 'fulfilled');
+    await repository.saveRequest(created);
+    expect((await repository.getRequest(created.id))?.hospital, 'St. Paul Hospital');
+
+    await repository.saveRequest(
+      created.copyWith(status: RequestStatus.fulfilled),
+    );
+    expect(
+      (await repository.getRequest(created.id))?.status,
+      RequestStatus.fulfilled,
+    );
+    expect((await repository.getOpenRequests()).map((r) => r.id), [
+      'request-1',
+    ]);
   });
 }

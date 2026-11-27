@@ -106,7 +106,13 @@ void main() {
     final repo = InMemoryAuthRepository(buildStore());
 
     expect(await repo.currentUser, isNull);
-    expect((await repo.signIn(email: 'd@example.com')).id, 'u2');
+    expect(
+      (await repo.signIn(
+        email: 'd@example.com',
+        password: InMemoryAuthRepository.demoPassword,
+      )).id,
+      'u2',
+    );
     expect((await repo.currentUser)?.id, 'u2');
 
     await repo.signOut();
