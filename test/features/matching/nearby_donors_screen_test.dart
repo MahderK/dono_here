@@ -206,4 +206,32 @@ void main() {
         .getResponses('request-1');
     expect(responses.map((r) => r.donorId), contains('donor-1'));
   });
+
+  testWidgets('requester sees that a donor responded on request detail', (
+    tester,
+  ) async {
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
+
+    await container.read(authProvider.notifier).signIn(
+          email: 'birhanu@example.com',
+          password: 'password123',
+        );
+    await container.read(matchingRepositoryProvider).respondToRequest(
+          requestId: 'request-1',
+          donorId: 'donor-1',
+        );
+    await container.read(authProvider.notifier).signOut();
+    await container.read(authProvider.notifier).signIn(
+          email: 'ada@example.com',
+          password: 'password123',
+        );
+
+    await tester.pumpWidget(
+      screenWith(container, const RequestDetailScreen(requestId: 'request-1')),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('1 donor(s) responded'), findsOneWidget);
+  });
 }

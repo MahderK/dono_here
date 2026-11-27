@@ -3,10 +3,11 @@ import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../core/router/routes.dart';
+import '../../../core/utils/date_format.dart';
 import '../../../core/utils/enum_labels.dart';
 import '../../../domain/models/enums.dart';
 import '../../donor/presentation/widgets/respond_section.dart';
-import '../../../core/utils/date_format.dart';
+import '../../matching/presentation/providers/matching_providers.dart';
 import 'providers/requests_providers.dart';
 
 class RequestDetailScreen extends ConsumerWidget {
@@ -32,6 +33,7 @@ class RequestDetailScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final request = ref.watch(requestDetailProvider(requestId));
     final currentUserId = ref.watch(currentRequesterIdProvider);
+    final responses = ref.watch(requestResponsesProvider(requestId)).value ?? const [];
 
     return Scaffold(
       appBar: AppBar(title: const Text('Request Detail')),
@@ -77,6 +79,15 @@ class RequestDetailScreen extends ConsumerWidget {
                   child: const Text('Mark as fulfilled'),
                 ),
                 const SizedBox(height: 12),
+              ],
+              if (responses.isNotEmpty) ...[
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: Text(
+                    '${responses.length} donor(s) responded',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
               ],
               OutlinedButton(
                 onPressed: () =>

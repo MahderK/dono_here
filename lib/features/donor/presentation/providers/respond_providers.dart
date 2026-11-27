@@ -7,6 +7,7 @@ import '../../../../domain/models/enums.dart';
 import '../../../../domain/models/request_response.dart';
 // TEMP: replace with Siham's provider once T3 is merged.
 import '../../../auth/presentation/providers/current_user_provider.dart';
+import '../../../matching/presentation/providers/matching_providers.dart';
 import 'donor_profile_providers.dart';
 import 'matching_requests_providers.dart';
 
@@ -94,6 +95,7 @@ class RespondController extends Notifier<Set<String>> {
           .read(matchingRepositoryProvider)
           .respondToRequest(requestId: request.id, donorId: profile.id);
       ref.invalidate(myResponseProvider(request.id));
+      ref.invalidate(requestResponsesProvider(request.id));
       ref.invalidate(matchingRequestsProvider);
       return null;
     } catch (error) {
