@@ -4,48 +4,60 @@ import 'package:go_router/go_router.dart';
 
 import 'package:dono_here/features/auth/presentation/providers/auth_provider.dart';
 import 'package:dono_here/features/auth/presentation/screens/sign_in_screen.dart';
-import 'package:dono_here/features/donor/presentation/screens/donor_profile_screen.dart';
-import 'package:dono_here/features/matching/presentation/screens/nearby_donors_screen.dart';
-import 'package:dono_here/features/requests/presentation/screens/create_request_screen.dart';
-import 'package:dono_here/features/requests/presentation/screens/home_screen.dart';
-import 'package:dono_here/features/requests/presentation/screens/my_requests_screen.dart';
-import 'package:dono_here/features/requests/presentation/screens/request_detail_screen.dart';
+import 'package:dono_here/features/donor/presentation/donor_profile_screen.dart';
+import 'package:dono_here/features/matching/presentation/nearby_donors_screen.dart';
+import 'package:dono_here/features/requests/presentation/create_request_screen.dart';
+import 'package:dono_here/features/requests/presentation/home_screen.dart';
+import 'package:dono_here/features/requests/presentation/my_requests_screen.dart';
+import 'package:dono_here/features/requests/presentation/request_detail_screen.dart';
 
-final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
+import '../widgets/app_shell.dart';
+import 'routes.dart';
+
+final authRedirectRefreshProvider = Provider<ValueNotifier<int>>((ref) {
+  final notifier = ValueNotifier<int>(0);
+  ref.onDispose(notifier.dispose);
+  return notifier;
+});
 
 final appRouterProvider = Provider<GoRouter>((ref) {
-  // Watching authState makes GoRouter re-evaluate redirect when user signs in/out.
-  final authState = ref.watch(authProvider);
+  final refresh = ref.watch(authRedirectRefreshProvider);
+  final rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 
-  return GoRouter(
-    navigatorKey: _rootNavigatorKey,
-    initialLocation: '/home',
+  ref.listen(authProvider, (previous, next) {
+    refresh.value++;
+  });
+
+  final router = GoRouter(
+    navigatorKey: rootNavigatorKey,
+    initialLocation: AppRoutes.home,
+    refreshListenable: refresh,
     redirect: (context, state) {
-      final isLoggedIn = authState.user != null;
-      final isOnSignIn = state.matchedLocation == '/sign-in';
+      final isLoggedIn = ref.read(authProvider).user != null;
+      final isOnSignIn = state.matchedLocation == AppRoutes.signIn;
 
       if (!isLoggedIn && !isOnSignIn) {
-        return '/sign-in';
+        return AppRoutes.signIn;
       }
       if (isLoggedIn && isOnSignIn) {
-        return '/home';
+        return AppRoutes.home;
       }
       return null;
     },
     routes: [
       GoRoute(
-        path: '/sign-in',
+        path: AppRoutes.signIn,
         builder: (context, state) => const SignInScreen(),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
-          return _AppShellScaffold(navigationShell: navigationShell);
+          return AppShell(navigationShell: navigationShell);
         },
         branches: [
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: '/home',
+                path: AppRoutes.home,
                 builder: (context, state) => const HomeScreen(),
               ),
             ],
@@ -53,7 +65,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: '/profile',
+                path: AppRoutes.profile,
                 builder: (context, state) => const DonorProfileScreen(),
               ),
             ],
@@ -61,7 +73,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: '/my-requests',
+                path: AppRoutes.myRequests,
                 builder: (context, state) => const MyRequestsScreen(),
               ),
             ],
@@ -69,65 +81,31 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         ],
       ),
       GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
-        path: '/requests/new',
+        parentNavigatorKey: rootNavigatorKey,
+        path: AppRoutes.createRequest,
         builder: (context, state) => const CreateRequestScreen(),
       ),
       GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
-        path: '/requests/:id',
+        parentNavigatorKey: rootNavigatorKey,
+        path: AppRoutes.requestDetail,
         builder: (context, state) {
-          final requestId = state.pathParameters['id'] ?? '';
-          return RequestDetailScreen(requestId: requestId);
+          return RequestDetailScreen(
+            requestId: state.pathParameters['id'] ?? '',
+          );
         },
       ),
       GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
-        path: '/requests/:id/donors',
+        parentNavigatorKey: rootNavigatorKey,
+        path: AppRoutes.nearbyDonors,
         builder: (context, state) {
-          final requestId = state.pathParameters['id'] ?? '';
-          return NearbyDonorsScreen(requestId: requestId);
+          return NearbyDonorsScreen(
+            requestId: state.pathParameters['id'] ?? '',
+          );
         },
       ),
     ],
   );
+
+  ref.onDispose(router.dispose);
+  return router;
 });
-
-class _AppShellScaffold extends StatelessWidget {
-  const _AppShellScaffold({required this.navigationShell});
-
-  final StatefulNavigationShell navigationShell;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: navigationShell,
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: navigationShell.currentIndex,
-        onDestinationSelected: (index) {
-          navigationShell.goBranch(
-            index,
-            initialLocation: index == navigationShell.currentIndex,
-          );
-        },
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.person_outline),
-            selectedIcon: Icon(Icons.person),
-            label: 'Donor Profile',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.list_alt_outlined),
-            selectedIcon: Icon(Icons.list_alt),
-            label: 'My Requests',
-          ),
-        ],
-      ),
-    );
-  }
-}

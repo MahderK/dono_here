@@ -6,10 +6,17 @@ import 'package:dono_here/features/requests/presentation/create_request_screen.d
 import 'package:dono_here/features/requests/presentation/my_requests_screen.dart';
 import 'package:dono_here/features/requests/presentation/providers/requests_providers.dart';
 
+ProviderScope _scopeFor(String userId, Widget child) {
+  return ProviderScope(
+    overrides: [currentRequesterIdProvider.overrideWithValue(userId)],
+    child: child,
+  );
+}
+
 void main() {
   testWidgets('My Requests lists the current user\'s requests', (tester) async {
     await tester.pumpWidget(
-      const ProviderScope(child: MaterialApp(home: MyRequestsScreen())),
+      _scopeFor('user-1', const MaterialApp(home: MyRequestsScreen())),
     );
     await tester.pumpAndSettle();
 
@@ -32,7 +39,7 @@ void main() {
 
   testWidgets('Create request form validates required fields', (tester) async {
     await tester.pumpWidget(
-      const ProviderScope(child: MaterialApp(home: CreateRequestScreen())),
+      _scopeFor('user-1', const MaterialApp(home: CreateRequestScreen())),
     );
 
     final submit = find.text('Submit request');

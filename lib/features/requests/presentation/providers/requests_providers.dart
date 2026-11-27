@@ -3,18 +3,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/providers/repository_providers.dart';
 import '../../../../domain/models/blood_request.dart';
 import '../../../../domain/models/enums.dart';
+import '../../../auth/presentation/providers/current_user_provider.dart';
 
 /// Default hospital-area coordinates (central Addis Ababa) used in Milestone 1,
 /// because the create-request form does not collect a location yet.
 const double defaultRequestLatitude = 9.0300;
 const double defaultRequestLongitude = 38.7400;
 
-/// TEMPORARY SEAM until T3 (auth) is merged.
-///
-/// Returns the id of the signed-in user. Once the auth provider exists, change
-/// the body to e.g. `ref.watch(currentUserProvider)?.id` and nothing else in
-/// the requests feature needs to change. Tests override this provider.
-final currentRequesterIdProvider = Provider<String?>((ref) => 'user-1');
+/// The signed-in requester id. Auth is now the single source of truth.
+final currentRequesterIdProvider = Provider<String?>(
+  (ref) => ref.watch(currentUserProvider)?.id,
+);
 
 /// All open requests, newest first (shown on Home).
 final openRequestsProvider = FutureProvider<List<BloodRequest>>((ref) async {
@@ -35,8 +34,8 @@ final requestDetailProvider = FutureProvider.family<BloodRequest?, String>((
 /// The signed-in user's own blood requests, newest first.
 final myRequestsProvider =
     AsyncNotifierProvider<MyRequestsNotifier, List<BloodRequest>>(
-      MyRequestsNotifier.new,
-    );
+  MyRequestsNotifier.new,
+);
 
 class MyRequestsNotifier extends AsyncNotifier<List<BloodRequest>> {
   @override

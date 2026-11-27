@@ -8,7 +8,9 @@ void main() {
   test(
     'createRequest stores an open request owned by the current user',
     () async {
-      final container = ProviderContainer();
+      final container = ProviderContainer(
+        overrides: [currentRequesterIdProvider.overrideWithValue('user-1')],
+      );
       addTearDown(container.dispose);
 
       final before = await container.read(myRequestsProvider.future);
