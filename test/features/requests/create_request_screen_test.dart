@@ -22,6 +22,7 @@ void main() {
           bloodType: BloodType.oNegative,
           units: 2,
           hospital: 'St. Paul Hospital',
+          area: 'Bole',
           urgency: RequestUrgency.critical,
         );
 
@@ -45,6 +46,7 @@ void main() {
             bloodType: BloodType.oPositive,
             units: 1,
             hospital: 'Tikur Anbessa',
+            area: 'Bole',
             urgency: RequestUrgency.low,
           ),
       throwsA(isA<StateError>()),

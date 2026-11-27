@@ -1,11 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_ui/material_ui.dart';
 
+import '../../../core/utils/date_format.dart';
 import '../../../core/utils/enum_labels.dart';
-import '../../../domain/models/blood_request.dart';
 import '../../../domain/models/donor_profile.dart';
-import '../../requests/presentation/providers/requests_providers.dart';
-import 'providers/matching_providers.dart';
+import 'providers/nearby_donors_providers.dart';
 
 class NearbyDonorsScreen extends ConsumerWidget {
   const NearbyDonorsScreen({super.key, required this.requestId});
@@ -14,55 +13,63 @@ class NearbyDonorsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final request = ref.watch(requestDetailProvider(requestId));
-    final donors = ref.watch(nearbyDonorsProvider(requestId));
+    final result = ref.watch(nearbyDonorsProvider(requestId));
 
     return Scaffold(
       appBar: AppBar(title: const Text('Nearby Donors')),
-      body: request.when(
+      body: result.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, _) =>
-            Center(child: Text('Could not load request: $error')),
-        data: (item) {
-          if (item == null) {
+            Center(child: Text('Could not load donors: $error')),
+        data: (data) {
+          if (data == null) {
             return const Center(child: Text('Request not found'));
           }
+
+          final request = data.request;
+          final donors = data.donors;
+
+          if (donors.isEmpty) {
+            return const Center(
+              child: Padding(
+                padding: EdgeInsets.all(24),
+                child: Text(
+                  'No matching donors right now.',
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            );
+          }
+
           return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
                 child: Text(
-                  '${item.hospital} · ${item.bloodTypeNeeded.label} · '
-                  '${item.unitsNeeded} unit(s)',
+                  '${request.hospital} · ${request.bloodTypeNeeded.label}',
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
               ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  'In Milestone 1, "nearby" means the donor area text matches '
+                  'the request area'
+                  '${request.area.isEmpty ? '' : ' (${request.area})'}'
+                  '. Availability may be stale — check last updated.',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ),
+              const SizedBox(height: 8),
               Expanded(
-                child: donors.when(
-                  loading: () =>
-                      const Center(child: CircularProgressIndicator()),
-                  error: (error, _) =>
-                      Center(child: Text('Could not load donors: $error')),
-                  data: (list) {
-                    if (list.isEmpty) {
-                      return const Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(24),
-                          child: Text(
-                            'No available matching donors right now.',
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      );
-                    }
-                    return ListView.builder(
-                      padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
-                      itemCount: list.length,
-                      itemBuilder: (context, index) => _DonorTile(
-                        donor: list[index],
-                        request: item,
-                      ),
+                child: ListView.builder(
+                  itemCount: donors.length,
+                  itemBuilder: (context, index) {
+                    final donor = donors[index];
+                    return _DonorCard(
+                      donor: donor,
+                      sameArea: isSameArea(request, donor),
                     );
                   },
                 ),
@@ -75,29 +82,24 @@ class NearbyDonorsScreen extends ConsumerWidget {
   }
 }
 
-class _DonorTile extends StatelessWidget {
-  const _DonorTile({required this.donor, required this.request});
+class _DonorCard extends StatelessWidget {
+  const _DonorCard({required this.donor, required this.sameArea});
 
   final DonorProfile donor;
-  final BloodRequest request;
+  final bool sameArea;
 
   @override
   Widget build(BuildContext context) {
-    final distance = distanceKm(
-      fromLatitude: request.latitude,
-      fromLongitude: request.longitude,
-      toLatitude: donor.latitude,
-      toLongitude: donor.longitude,
-    );
-
     return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       child: ListTile(
         leading: CircleAvatar(child: Text(donor.bloodType.label)),
         title: Text(donor.area),
         subtitle: Text(
-          'Available · ${distance.toStringAsFixed(1)} km away · '
-          'Updated ${donor.updatedAt.toLocal().toString().split(' ').first}',
+          '${donor.isAvailable ? 'Available' : 'Unavailable'}'
+          ' • Last updated ${formatDate(donor.updatedAt)}',
         ),
+        trailing: sameArea ? const Chip(label: Text('Same area')) : null,
       ),
     );
   }
