@@ -4,23 +4,36 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../core/router/routes.dart';
 import '../../../core/utils/enum_labels.dart';
-import 'providers/requests_providers.dart';
+import '../../auth/presentation/providers/auth_provider.dart';
+import '../../auth/presentation/providers/current_user_provider.dart';
+import '../../matching/presentation/providers/matching_providers.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final requests = ref.watch(openRequestsProvider);
+    final requests = ref.watch(visibleOpenRequestsProvider);
+    final user = ref.watch(currentUserProvider);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home (Open Requests)'),
         actions: [
-          TextButton(
-            onPressed: () => context.go(AppRoutes.signIn),
-            child: const Text('Sign In'),
-          ),
+          if (user != null) ...[
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 18),
+              child: Text(user.fullName),
+            ),
+            TextButton(
+              onPressed: () => ref.read(authProvider.notifier).signOut(),
+              child: const Text('Sign Out'),
+            ),
+          ] else
+            TextButton(
+              onPressed: () => context.go(AppRoutes.signIn),
+              child: const Text('Sign In'),
+            ),
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
