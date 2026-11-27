@@ -57,9 +57,14 @@ void main() {
     expect(open.map((r) => r.id), contains(created.id));
   });
 
-  testWidgets('Home lists open requests', (tester) async {
+  testWidgets('Home lists open requests that match the donor blood type', (
+    tester,
+  ) async {
     await tester.pumpWidget(
-      const ProviderScope(child: MaterialApp(home: HomeScreen())),
+      ProviderScope(
+        overrides: [currentRequesterIdProvider.overrideWithValue('user-2')],
+        child: const MaterialApp(home: HomeScreen()),
+      ),
     );
     await tester.pumpAndSettle();
 
@@ -117,4 +122,42 @@ void main() {
 
     expect(find.text('Request not found'), findsOneWidget);
   });
+
+    testWidgets('Home asks a user without a donor profile to complete it', (
+    tester,
+  ) async {
+    // Default user-1 has no donor profile.
+    await tester.pumpWidget(
+      const ProviderScope(child: MaterialApp(home: HomeScreen())),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Complete profile'), findsOneWidget);
+    expect(find.text('Tikur Anbessa'), findsNothing);
+  });
+
+  testWidgets('a matching donor can respond to a request', (tester) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [currentRequesterIdProvider.overrideWithValue('user-2')],
+        child: const MaterialApp(
+          home: RequestDetailScreen(requestId: 'request-1'),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Mark as fulfilled'), findsNothing);
+    final respond = find.text('Respond');
+    expect(respond, findsOneWidget);
+
+    await tester.ensureVisible(respond);
+    await tester.tap(respond);
+    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 5));
+    await tester.pumpAndSettle();
+
+    expect(find.text('You already responded to this request.'), findsOneWidget);
+  });
 }
+
