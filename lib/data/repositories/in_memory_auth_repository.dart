@@ -5,7 +5,7 @@ import 'in_memory_store.dart';
 
 class InMemoryAuthRepository implements AuthRepository {
   InMemoryAuthRepository(this._store) {
-    // Demo credential for every seeded user; new users keep what they register with.
+    // Demo credential for all seed users in Milestone 1.
     for (final user in _store.users.values) {
       _passwords[_key(user.email)] = demoPassword;
     }
@@ -30,6 +30,7 @@ class InMemoryAuthRepository implements AuthRepository {
     required String password,
   }) async {
     final key = _key(email);
+
     final user = _store.users.values.firstWhere(
       (user) => _key(user.email) == key,
       orElse: () => throw StateError('No user found with email: $email'),
@@ -70,6 +71,7 @@ class InMemoryAuthRepository implements AuthRepository {
     _store.users[user.id] = user;
     _passwords[key] = password;
     _currentUserId = user.id;
+
     return user;
   }
 
